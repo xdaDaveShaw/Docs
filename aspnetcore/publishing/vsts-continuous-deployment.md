@@ -26,8 +26,6 @@ This tutorial assumes you already have the following:
 
 * [Git](http://git-scm.com/downloads)
 
-* The [Trackyon Advantage](https://marketplace.visualstudio.com/items?itemName=Trackyon.trackyonadvantage) extension installed into your team services account. This adds an available zip task for later steps.
-
 ## Setup VSTS Build
 
 1.  Setup some build variables to make later steps clearer and easier to retain consistent paths across build steps.
@@ -70,15 +68,17 @@ This tutorial assumes you already have the following:
 
     ![image](vsts-continuous-deployment/_static/dotnet-publish.png)
 
-4.  Compress the published output so it can be deployed to Azure App Service. We will use the [Trackyon Advantage](https://marketplace.visualstudio.com/items?itemName=Trackyon.trackyonadvantage) task we installed to zip the contents of our published output for deployment.
+4.  Compress the published output so it can be deployed to Azure App Service. We will use the built in **Archive Files** utility task to zip the contents of our published output for deployment.
 
-    * Click **Add build step...** and choose **Utility** > **Trackyon Zip** > **Add**
+    * Click **Add build step...** and choose **Utility** > **Archive Files** > **Add**
 
     * Set the arguments for the zip build step as:
 
-        * Folder to Zip: `$(PublishOutput)`
+        * Root folder (or file) to archive: ``$(PublishOutput)``
 
-        * Path to final Zip file: `$(DeployPackage)`
+        * Prefix root folder name to archive paths: ``unchecked``
+
+        * Archive file to create: ``$(DeployPackage)``
 
     ![image](vsts-continuous-deployment/_static/compress-publish-output.png)
 
@@ -102,15 +102,15 @@ This tutorial assumes you already have the following:
 
 VSTS Release management can alternatively be used to manage the release pipeline from the VSTS build. We require a small change to the build pipeline and setup of the release process.
 
-1.  If configured, remove the Azure Web App Deployment step from the VSTS build setup in the previous section.
+1.  If configured, remove the **Azure Web App Deployment** step from the VSTS build setup in the previous section.
 
-2.  Add a Copy and Publish Build Artifacts step to the build pipeline
+2.  Add a **Publish Build Artifacts** step to the build pipeline
 
-    *  Click **Add build step...** and choose **Utility** > **Copy and Publish Build Artifacts** > **Add**
+    *  Click **Add build step...** and choose **Utility** > **Publish Build Artifacts** > **Add**
 
     *  Set the arguments for the copy and publish step as:
 
-        *  Contents: `$(DeployPackage)`
+        *  Path to Publish: `$(DeployPackage)`
 
         *  Artifact Name: `DeployPackage`
 
